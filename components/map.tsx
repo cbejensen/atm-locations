@@ -11,13 +11,32 @@ import {
 } from 'react'
 import { MapMarker } from './map-marker'
 
+interface AtmMarker extends google.maps.MarkerOptions {
+  id: string
+}
+
+const markers: AtmMarker[] = [
+  {
+    id: 'J34B2nxLfSPyJWfi7',
+    title: 'Food Mart',
+    position: { lat: 40.70431, lng: -111.9772035 },
+  },
+  {
+    id: '4NZoxCq5TkW5xmgw9',
+    title: 'Express Mart',
+    position: { lat: 40.5873117, lng: -111.9603154 },
+  },
+]
+
 export function Map({ apiKey }: { apiKey: string }) {
   const center = { lat: 40.6421968, lng: -112.010997 }
-  const zoom = 11
+  const zoom = 11;
   return (
     <Wrapper apiKey={apiKey} render={MapStatus}>
       <MapInner center={center} zoom={zoom}>
-        <MapMarker position={{lat: 40.7039987, lng: -111.9776967}}></MapMarker>
+        {markers.map(({ id, ...rest }, i) => (
+          <MapMarker key={id} id={id} {...rest}></MapMarker>
+        ))}
       </MapInner>
     </Wrapper>
   )
@@ -26,10 +45,10 @@ export function Map({ apiKey }: { apiKey: string }) {
 function MapInner({
   center,
   zoom,
-  children
+  children,
 }: {
   center: google.maps.LatLngLiteral
-  zoom: number,
+  zoom: number
   children: ReactNode
 }) {
   const ref = useRef(null)
@@ -37,20 +56,21 @@ function MapInner({
 
   useEffect(() => {
     if (ref.current && !map) {
-      console.log(center, zoom)
       setMap(new google.maps.Map(ref.current, { center, zoom, styles: [] }))
     }
   }, [ref, map, center, zoom])
+
+  const infoWindow = useRef<google.maps.InfoWindow>(new google.maps.InfoWindow())
 
   return (
     <>
       <div ref={ref} className="w-full h-full" />
       {Children.map(children, (child) => {
         if (isValidElement(child)) {
-          // set the map prop on the child component
-          return cloneElement(child, { map })
+          return cloneElement(child, { map, infoWindow: infoWindow.current })
         }
       })}
+      
     </>
   )
 }

@@ -8,11 +8,14 @@ type MapMarkerProps = google.maps.MarkerOptions & {
 
 // https://stackoverflow.com/a/55457810/5253897
 function InfoWindowContent({ id, title }: { id: string; title: string }) {
+  const url = new URL('https://www.google.com/maps/search/?api=1')
+  url.searchParams.append('query', title);
+  url.searchParams.append('query_place_id', id);
   return (
     <>
       <h1 className="text-lg font-bold mb-1">{title}</h1>
       <a
-        href={`https://goo.gl/maps/${id}`}
+        href={url.href}
         target="_blank"
         rel="noreferrer"
         className="text-blue-500 visited:text-purple-700"

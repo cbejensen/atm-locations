@@ -10,31 +10,15 @@ import {
   cloneElement,
 } from 'react'
 import { MapMarker } from './map-marker'
-
-interface AtmMarker extends google.maps.MarkerOptions {
-  id: string
-}
-
-const markers: AtmMarker[] = [
-  {
-    id: 'J34B2nxLfSPyJWfi7',
-    title: 'Food Mart',
-    position: { lat: 40.70431, lng: -111.9772035 },
-  },
-  {
-    id: '4NZoxCq5TkW5xmgw9',
-    title: 'Express Mart',
-    position: { lat: 40.5873117, lng: -111.9603154 },
-  },
-]
+import { ATM_LOCATIONS } from '../atm-locations';
 
 export function Map({ apiKey }: { apiKey: string }) {
   const center = { lat: 40.6421968, lng: -112.010997 }
-  const zoom = 11;
+  const zoom = 11
   return (
     <Wrapper apiKey={apiKey} render={MapStatus}>
       <MapInner center={center} zoom={zoom}>
-        {markers.map(({ id, ...rest }, i) => (
+        {ATM_LOCATIONS.map(({ id, ...rest }, i) => (
           <MapMarker key={id} id={id} {...rest}></MapMarker>
         ))}
       </MapInner>
@@ -60,7 +44,9 @@ function MapInner({
     }
   }, [ref, map, center, zoom])
 
-  const infoWindow = useRef<google.maps.InfoWindow>(new google.maps.InfoWindow())
+  const infoWindow = useRef<google.maps.InfoWindow>(
+    new google.maps.InfoWindow(),
+  )
 
   return (
     <>
@@ -70,7 +56,6 @@ function MapInner({
           return cloneElement(child, { map, infoWindow: infoWindow.current })
         }
       })}
-      
     </>
   )
 }
